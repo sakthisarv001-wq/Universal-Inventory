@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Products - Universal Engineers</title><link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<body><div th:replace="~{fragments :: header}"></div>
+<main class="container">
+  <div class="section-title"><div><div class="eyebrow">CATALOGUE</div><h2>Products</h2><p class="muted">Browse product details, current stock, unit and availability.</p></div></div>
+  <form class="search-bar" method="get" th:action="@{/products}">
+    <input name="q" th:value="${q}" placeholder="Search product, code, brand or category...">
+    <select name="category" id="category"><option value="">All Categories</option><option th:each="c:${categories}" th:value="${c}" th:text="${c}" th:selected="${c==selectedCategory}"></option></select>
+    <select name="subCategory" id="subCategory"><option value="">All Sub Categories</option><option th:each="s:${subCategories}" th:value="${s}" th:text="${s}" th:selected="${s==selectedSubCategory}"></option></select>
+    <button class="btn btn-primary">Search</button>
+  </form>
+  <div th:if="${#lists.isEmpty(products)}" class="empty">No products found.</div>
+  <div class="product-grid">
+    <article class="product-card" th:each="p:${products}">
+      <img class="product-image" th:if="${p.imageData!=null}" th:src="@{/products/{id}/image(id=${p.id})}" alt="Product">
+      <div class="product-image image-placeholder" th:if="${p.imageData==null}">Universal Engineers</div>
+      <div class="product-body">
+        <div><span class="pill" th:text="${p.category}"></span><span class="pill" th:text="${p.subCategory}"></span></div>
+        <h3 th:text="${p.productName}"></h3><p class="muted" th:text="${p.productCode}"></p>
+        <div class="stock-card"><span>Current Stock</span><strong th:text="${p.currentStock + ' ' + p.unitOfMeasurement}"></strong></div>
+        <div class="detail-list"><div><b>UOM</b><br><span th:text="${p.unitOfMeasurement}"></span></div><div><b>Opening</b><br><span th:text="${p.openingStock}"></span></div><div><b>Brand</b><br><span th:text="${p.brand ?: '-'}"></span></div><div><b>Status</b><br><span th:text="${p.status}"></span></div></div>
+        <div class="actions"><a class="btn btn-light" th:href="@{/products/{id}(id=${p.id})}">View Details</a><a sec:authorize="hasRole('USER')" class="btn btn-primary" th:href="@{/user/request/{id}(id=${p.id})}">Get Product</a></div>
+      </div>
+    </article>
+  </div>
+</main><div th:replace="~{fragments :: footer}"></div>
+<script>
+const cat=document.getElementById('category'),sub=document.getElementById('subCategory');
+if(cat)cat.addEventListener('change',()=>{sub.innerHTML='<option value="">All Sub Categories</option>';if(!cat.value)return;fetch('/api/subcategories?category='+encodeURIComponent(cat.value)).then(r=>r.json()).then(a=>a.forEach(x=>sub.add(new Option(x,x))))});
+</script></body></html>

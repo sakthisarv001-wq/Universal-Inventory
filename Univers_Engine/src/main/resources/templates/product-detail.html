@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title th:text="${product.productName}"></title><link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<body><div th:replace="~{fragments :: header}"></div>
+<main class="container">
+<div class="form-card">
+  <div class="info-grid">
+    <div><img class="product-image detail-image" th:if="${product.imageData!=null}" th:src="@{/products/{id}/image(id=${product.id})}" alt="Product"><div class="product-image detail-image" th:if="${product.imageData==null}">No image</div></div>
+    <div>
+      <span class="pill" th:text="${product.category}"></span><span class="pill" th:text="${product.subCategory}"></span>
+      <h1 th:text="${product.productName}"></h1><p class="muted" th:text="${product.productCode}"></p>
+      <div class="stock-banner"><span>Current Stock</span><strong th:text="${product.currentStock + ' ' + product.unitOfMeasurement}"></strong></div>
+      <div class="detail-list wide-details">
+        <div>Opening Stock<br><b th:text="${product.openingStock}"></b></div><div>UOM<br><b th:text="${product.unitOfMeasurement}"></b></div>
+        <div>Brand<br><b th:text="${product.brand ?: '-'}"></b></div><div>Purchase Rate<br><b th:text="${product.purchaseRate ?: '-'}"></b></div>
+        <div>Supplier<br><b th:text="${product.supplierVendor ?: '-'}"></b></div><div>Location / Rack<br><b th:text="${product.locationRack ?: '-'}"></b></div>
+        <div>GST / Tax<br><b th:text="${product.gstTax ?: '-'}"></b></div><div>GST %<br><b th:text="${product.gstPercentage ?: 0}"></b></div>
+        <div>GST Amount / Unit<br><b th:text="${product.gstAmountPerUnit}"></b></div><div>Purchase incl. GST<br><b th:text="${product.purchaseRateIncludingGst}"></b></div>
+        <div>HSN Code<br><b th:text="${product.hsnCode ?: '-'}"></b></div><div>Invoice ID<br><b th:text="${product.gstInvoiceId ?: '-'}"></b></div>
+        <div>Opening Stock Value<br><b th:text="${product.openingStockValueExclGst}"></b></div><div>Status<br><b th:text="${product.status}"></b></div>
+      </div>
+    </div>
+  </div>
+  <div class="description-box"><b>Specific Product Details</b><p class="muted" th:text="${product.specificProductDetails ?: '-'}"></p></div>
+  <div class="actions"><a class="btn btn-light" th:href="@{/products}">Back</a><a sec:authorize="hasRole('USER')" class="btn btn-primary" th:href="@{/user/request/{id}(id=${product.id})}">Get Product</a></div>
+</div>
+</main><div th:replace="~{fragments :: footer}"></div></body></html>

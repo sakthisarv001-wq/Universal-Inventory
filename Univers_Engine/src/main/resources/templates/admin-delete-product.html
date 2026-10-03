@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Delete Product</title><link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<body><div th:replace="~{fragments :: header}"></div><main class="container">
+<div class="section-title"><div><div class="eyebrow">ADMIN ONLY</div><h2>Delete Product</h2><p class="muted">Delete permanently removes the product, its image, and its related request records. This cannot be undone.</p></div></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Image</th><th>Product</th><th>Code</th><th>Category</th><th>Sub Category</th><th>Current Stock</th><th>Delete</th></tr></thead><tbody>
+<tr th:each="p:${products}"><td><img class="small-img" th:if="${p.imageData!=null}" th:src="@{/products/{id}/image(id=${p.id})}"></td><td><b th:text="${p.productName}"></b></td><td th:text="${p.productCode}"></td><td th:text="${p.category}"></td><td th:text="${p.subCategory}"></td><td th:text="${p.currentStock + ' ' + p.unitOfMeasurement}"></td>
+<td><form th:action="@{/admin/products/delete}" method="post"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><input type="hidden" name="id" th:value="${p.id}"><button class="btn btn-danger" onclick="return confirm('Delete this product permanently?')">Delete</button></form></td></tr>
+</tbody></table></div></main><div th:replace="~{fragments :: footer}"></div></body></html>

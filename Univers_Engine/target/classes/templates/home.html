@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Universal Engineers</title><link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<body><div th:replace="~{fragments :: header}"></div>
+<main class="container"><section class="hero">
+<div class="eyebrow light">UNIVERSAL ENGINEERS</div><h1>Product Management<br>made simple.</h1>
+<p>Manage products, stock, GST details and product images in one secure system. Admins manage the catalogue; users can view products and get available quantities.</p>
+<div class="actions"><a class="btn btn-light" th:href="@{/login}">Login</a></div>
+</section>
+<div class="section-title"><div><div class="eyebrow">SYSTEM</div><h2>What you can do</h2></div></div>
+<div class="info-grid"><div class="card"><h3>Complete Product Records</h3><p class="muted">Category, sub-category, UOM, brand, supplier, rack, GST, HSN, invoice and image.</p></div><div class="card"><h3>Live Stock</h3><p class="muted">Opening stock and current available stock are stored in MySQL and updated when a user gets a quantity.</p></div><div class="card"><h3>Role Based Access</h3><p class="muted">Admin has Create, Read, Update and Delete access. User has Read and Get Product access.</p></div></div>
+</main><div th:replace="~{fragments :: footer}"></div></body></html>

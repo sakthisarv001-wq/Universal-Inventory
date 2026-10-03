@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login - Universal Engineers</title><link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<main class="login-page">
+  <div class="login-box">
+    <div class="brand login-brand"><img th:src="@{/images/logo.jpg}" alt="Universal Engineers"></div>
+    <div class="login-kicker">SECURE PRODUCT MANAGEMENT</div>
+    <h1>Welcome back</h1>
+    <p class="login-subtitle">Sign in to continue to Universal Engineers.</p>
+    <div th:if="${param.error}" class="msg error">Invalid username or password. Please use the credentials shown below.</div>
+    <div th:if="${param.logout}" class="msg">You have been logged out successfully.</div>
+    <form th:action="@{/login}" method="post" autocomplete="on">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+      <div class="field"><label>Username</label><input name="username" type="text" autocomplete="username" placeholder="Enter username" required autofocus></div>
+      <div class="field"><label>Password</label><input name="password" type="password" autocomplete="current-password" placeholder="Enter password" required></div>
+      <button class="btn btn-primary login-button" type="submit">Login</button>
+    </form>
+<!--    <div class="credential-card">-->
+<!--      <b>Demo accounts</b>-->
+<!--      <div><span>Admin</span><code>admin / admin123</code></div>-->
+<!--      <div><span>User</span><code>user / user123</code></div>-->
+<!--    </div>-->
+  </div>
+</main>
+</body>
+</html>

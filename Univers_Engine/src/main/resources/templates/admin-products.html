@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Manage Products</title><link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<body><div th:replace="~{fragments :: header}"></div>
+<main class="container">
+  <div class="section-title"><div><div class="eyebrow">ADMIN</div><h2>Manage Products</h2><p class="muted">Create, update and delete the complete product record.</p></div><div class="actions"><a class="btn btn-primary" th:href="@{/admin/products/create}">+ Create Product</a><a class="btn btn-danger" th:href="@{/admin/products/delete}">Delete Product</a></div></div>
+  <div th:if="${param.created}" class="msg">Product created successfully.</div><div th:if="${param.updated}" class="msg">Product updated successfully.</div><div th:if="${param.deleted}" class="msg">Product deleted successfully.</div><div th:if="${param.error}" class="msg error" th:text="${param.error}"></div><div th:if="${param.deleteError}" class="msg error">Delete failed. The selected product details did not match.</div>
+  <div class="table-wrap"><table class="table"><thead><tr><th>Image</th><th>Product</th><th>Code</th><th>Category</th><th>Sub Category</th><th>UOM</th><th>Opening</th><th>Current</th><th>Status</th><th>Action</th></tr></thead>
+  <tbody><tr th:each="p:${products}">
+    <td><img class="small-img" th:if="${p.imageData!=null}" th:src="@{/products/{id}/image(id=${p.id})}"><span th:if="${p.imageData==null}">-</span></td>
+    <td><b th:text="${p.productName}"></b><br><small th:text="${p.brand ?: '-'}"></small></td><td th:text="${p.productCode}"></td><td th:text="${p.category}"></td><td th:text="${p.subCategory}"></td><td th:text="${p.unitOfMeasurement}"></td><td th:text="${p.openingStock}"></td><td><b th:text="${p.currentStock}"></b></td><td th:text="${p.status}"></td>
+    <td><a class="btn btn-light" th:href="@{/products/{id}(id=${p.id})}">View</a> <a class="btn btn-primary" th:href="@{/admin/products/edit/{id}(id=${p.id})}">Update</a></td>
+  </tr></tbody></table></div>
+</main><div th:replace="~{fragments :: footer}"></div></body></html>

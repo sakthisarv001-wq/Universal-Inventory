@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="formFields">
+  <div class="form-section-title">Basic Product Information</div>
+  <div class="form-grid">
+    <div class="field"><label>Product Name *</label><input name="productName" th:value="${product.productName}" required></div>
+    <div class="field">
+<label>Product Code <span th:if="${allowProductCodeEdit}">*</span></label>
+<input th:if="${allowProductCodeEdit}" name="productCode" th:value="${product.productCode}" required>
+<input th:unless="${allowProductCodeEdit}" th:value="${product.productCode ?: 'Generated automatically'}" readonly>
+</div>
+    <div class="field"><label>Category *</label><select name="category" id="formCategory" required><option value="">Select category</option><option th:each="c:${categories}" th:value="${c}" th:text="${c}" th:selected="${c==product.category}"></option></select></div>
+    <div class="field"><label>Sub Category *</label><select name="subCategory" id="formSubCategory" required><option value="">Select sub category</option><option th:each="s:${subCategories}" th:value="${s}" th:text="${s}" th:selected="${s==product.subCategory}"></option></select></div>
+    <div class="field"><label>Unit of Measurement *</label><select name="unitOfMeasurement" required><option value="">Select UOM</option><option th:each="u:${units}" th:value="${u}" th:text="${u}" th:selected="${u==product.unitOfMeasurement}"></option></select></div>
+    <div class="field"><label>Brand</label><input name="brand" th:value="${product.brand}"></div>
+    <div class="field full"><label>Specific Product Details</label><textarea name="specificProductDetails" th:text="${product.specificProductDetails}" placeholder="Size, grade, specification, model, etc."></textarea></div>
+  </div>
+
+  <div class="form-section-title">Stock & Purchase</div>
+  <div class="form-grid">
+    <div class="field"><label>Opening Stock *</label><input type="number" step="0.001" min="0" name="openingStock" th:value="${product.openingStock}" required></div>
+    <div class="field">
+<label>Current Stock <span th:if="${allowProductCodeEdit}">*</span></label>
+<input th:if="${allowProductCodeEdit}" type="number" step="0.001" min="0" name="currentStock" th:value="${product.currentStock ?: product.openingStock ?: 0}" required>
+<input th:unless="${allowProductCodeEdit}" type="text" th:value="${product.currentStock ?: product.openingStock ?: 0}" readonly>
+</div>
+    <div class="field"><label>Purchase Rate (₹, excl. GST)</label><input id="purchaseRate" type="number" step="0.01" min="0" name="purchaseRate" th:value="${product.purchaseRate}"></div>
+    <div class="field"><label>Supplier / Vendor</label><input name="supplierVendor" th:value="${product.supplierVendor}"></div>
+    <div class="field"><label>Location / Rack</label><input name="locationRack" th:value="${product.locationRack}"></div>
+  </div>
+
+  <div class="form-section-title">GST & Invoice</div>
+  <div class="form-grid">
+    <div class="field"><label>GST / Tax</label><input name="gstTax" th:value="${product.gstTax}"></div>
+    <div class="field"><label>GST Percentage</label><input id="gstPercentage" type="number" step="0.01" min="0" max="100" name="gstPercentage" th:value="${product.gstPercentage}"></div>
+    <div class="field"><label>GST Amount / Unit (₹)</label><input id="gstAmountDisplay" type="text" th:value="${product.gstAmountPerUnit}" readonly></div>
+    <div class="field"><label>Purchase Rate incl. GST (₹)</label><input id="inclGstDisplay" type="text" th:value="${product.purchaseRateIncludingGst}" readonly></div>
+    <div class="field"><label>HSN Code</label><input name="hsnCode" th:value="${product.hsnCode}"></div>
+    <div class="field"><label>GST / Invoice ID</label><input name="gstInvoiceId" th:value="${product.gstInvoiceId}"></div>
+    <div class="field"><label>Opening Stock Value excl. GST (₹)</label><input id="stockValueDisplay" type="text" th:value="${product.openingStockValueExclGst}" readonly></div>
+  </div>
+
+  <div class="form-section-title">Status & Image</div>
+  <div class="form-grid">
+    <div class="field"><label>Product Status</label><select name="status"><option th:each="s:${statuses}" th:value="${s}" th:text="${s}" th:selected="${s==product.status}"></option></select></div>
+    <div class="field"><label>Product Image</label><input type="file" name="image" accept="image/*"></div>
+  </div>
+
+  <script>
+    const fc=document.getElementById('formCategory');
+    const fs=document.getElementById('formSubCategory');
+    if(fc){fc.addEventListener('change',()=>{
+      fs.innerHTML='<option value="">Select sub category</option>';
+      if(!fc.value)return;
+      fetch('/api/subcategories?category='+encodeURIComponent(fc.value))
+        .then(r=>r.ok?r.json():[])
+        .then(a=>a.forEach(x=>fs.add(new Option(x,x))));
+    });}
+    function money(v){return Number.isFinite(v)?v.toFixed(2):'0.00'}
+    function recalc(){
+      const rate=parseFloat(document.getElementById('purchaseRate')?.value)||0;
+      const gst=parseFloat(document.getElementById('gstPercentage')?.value)||0;
+      const stock=parseFloat(document.querySelector('[name="openingStock"]')?.value)||0;
+      const amount=rate*gst/100;
+      document.getElementById('gstAmountDisplay').value=money(amount);
+      document.getElementById('inclGstDisplay').value=money(rate+amount);
+      document.getElementById('stockValueDisplay').value=money(rate*stock);
+    }
+    ['purchaseRate','gstPercentage'].forEach(id=>document.getElementById(id)?.addEventListener('input',recalc));
+    document.querySelector('[name="openingStock"]')?.addEventListener('input',recalc);
+  </script>
+</div>
+</html>
